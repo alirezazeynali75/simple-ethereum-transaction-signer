@@ -14,15 +14,18 @@ export default class transactionService {
     const from: any = getConfig("FROM")
     const nonce = await this.web3.eth.getTransactionCount(from);
 
-    const transactionObject = {
-      from,
-      to,
-      gasLimit: "21000",
-      maxFeePerGas: "300",
-      maxPriorityFeePerGas: "10",
-      nonce: nonce.toString(),
-      value
-    };
+      const defaultGasLimit = "21000"
+      const maxFeePerGas = "300"
+      const maxPriorityFeePerGas = "10"
+      const transactionObject = {
+           from: this.from,
+           to,
+           defaultGasLimit,
+           maxFeePerGas,
+           maxPriorityFeePerGas,
+           nonce: nonce.toString(),
+           value,
+      }
     const signedTransaction = await this.web3.eth.accounts.signTransaction(
       transactionObject,
       this.web3.eth.accounts.privateKeyToAccount(getConfig("PRIVATE_KEY")).privateKey
