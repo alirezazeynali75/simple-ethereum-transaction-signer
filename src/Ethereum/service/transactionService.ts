@@ -28,7 +28,7 @@ export default class transactionService {
       }
     const signedTransaction = await this.web3.eth.accounts.signTransaction(
       transactionObject,
-      this.web3.eth.accounts.privateKeyToAccount(getConfig("PRIVATE_KEY")).privateKey
+     this.prvKey
     );
 
     const transactionReceipt = await this.web3.eth.sendSignedTransaction(signedTransaction.rawTransaction as string);
