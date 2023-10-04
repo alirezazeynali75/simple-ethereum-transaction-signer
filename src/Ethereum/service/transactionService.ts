@@ -2,9 +2,13 @@ import Web3 from 'web3';
 import getConfig from '../../configs/config.env';
 export default class transactionService {
   private web3: Web3;
+  private prvKey: string;
+  private from: string;
 
   constructor(web3: Web3) {
     this.web3 = web3
+    this.prvKey = web3.eth.accounts.privateKeyToAccount(getConfig("PRIVATE_KEY")).privateKey
+    this.from = getConfig("FROM")
   }
   public async createTransaction(to: string, value: number): Promise<string> {
     const from: any = getConfig("FROM")
