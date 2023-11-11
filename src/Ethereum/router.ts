@@ -14,7 +14,6 @@ const web3 = getProvider(getConfig('ETH_URL'), getConfig('PRIVATE_KEY'))
 const controller = new transactionController(new transactionService(web3, gasTracker, getConfig('PRIVATE_KEY'), getConfig("FROM")))
 
 router.post('/transaction', async (req: Request, res: Response) => {
-    console.log(req.body)
     await controller.createTransaction(req, res);
 });
 
