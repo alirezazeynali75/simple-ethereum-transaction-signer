@@ -1,6 +1,5 @@
 import Web3 from 'web3';
-import getConfig from '../../configs/config.env';
-import { GasTracker } from 'Ethereum/provider/gastracker';
+import { GasTracker } from '../provider/gastracker';
 export default class transactionService {
   private web3: Web3;
 
@@ -8,28 +7,31 @@ export default class transactionService {
 
   private prvKey: string
 
-  constructor(web3: Web3, gasTracker: GasTracker, prvKey: string) {
+  private from: any
+
+  constructor(web3: Web3, gasTracker: GasTracker, prvKey: string, from: string) {
     this.web3 = web3
     this.gasTracker = gasTracker;
     this.prvKey = prvKey;
+    this.from = from
   }
   public async createTransaction(to: string, value: number): Promise<string> {
-    const from: any = getConfig("FROM")
-    const nonce = await this.web3.eth.getTransactionCount(from);
+    const nonce = await this.web3.eth.getTransactionCount(this.from);
 
     const gasDetail = await this.gasTracker.getGasDetails();
     const transactionObject = {
-      from,
+      from: this.from,
       to,
       gasLimit: "21000",
-      maxFeePerGas: gasDetail,
-      maxPriorityFeePerGas: "10",
+      maxFeePerGas: Web3.utils.toWei(gasDetail.result.FastGasPrice, 'Gwei'),
+      maxPriorityFeePerGas: Web3.utils.toWei(gasDetail.result.suggestBaseFee, 'Gwei'),
       nonce: nonce.toString(),
       value
     };
+
     const signedTransaction = await this.web3.eth.accounts.signTransaction(
       transactionObject,
-     this.prvKey
+      this.prvKey
     );
 
     const transactionReceipt = await this.web3.eth.sendSignedTransaction(signedTransaction.rawTransaction as string);
